@@ -9,6 +9,7 @@ import (
 )
 
 var client = &http.Client{}
+var goterror = false
 
 func getrequest(url string, headers map[string]string) string {
 	req, err := http.NewRequest("GET", url, nil)
@@ -61,6 +62,7 @@ func check(url string, withua bool, withref bool,
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(failedstr, r)
+			goterror = true
 		}
 	}()
 	unsafe_check(url, withua, withref, maxlenght)
@@ -76,12 +78,9 @@ func main() {
 	fmt.Println("检查主页是否可用")
 	check(url, true, true,
 		"[✓] 正常", "[X] 异常：", -1)
-	fmt.Println("检查是否设置 UA 过滤")
-	check(url, true, false,
-		"[X] 未设置", "[✓] 已设置:", -1)
-	fmt.Println("检查是否设置 Referer 过滤")
-	check(url, false, true,
-		"[X] 未设置", "[✓] 已设置:", -1)
+	if goterror {
+		return
+	}
 	if strings.HasSuffix(url, ".xaml") {
 		fmt.Println("检查是否设置版本号(.ini)")
 		check(url+".ini", true, true,
@@ -91,4 +90,10 @@ func main() {
 		check(url+"/version", true, true,
 			"[✓] 正常", "[X] 异常：", 128)
 	}
+	fmt.Println("检查是否设置 UA 过滤")
+	check(url, true, false,
+		"[X] 未设置", "[✓] 已设置:", -1)
+	fmt.Println("检查是否设置 Referer 过滤")
+	check(url, false, true,
+		"[X] 未设置", "[✓] 已设置:", -1)
 }
