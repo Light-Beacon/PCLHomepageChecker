@@ -70,11 +70,13 @@ func check(url string, withua bool, withref bool,
 }
 
 func main() {
+	var url string
 	if len(os.Args) <= 1 {
-		fmt.Println("未提供 URL!")
-		return
+		fmt.Println("提供主页 URL:")
+		fmt.Scanln(&url)
+	} else {
+		url = os.Args[1]
 	}
-	url := os.Args[1]
 	fmt.Println("检查主页是否可用")
 	check(url, true, true,
 		"[✓] 正常", "[X] 异常：", -1)
