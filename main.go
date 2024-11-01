@@ -50,7 +50,9 @@ func unsafe_check(url string, withua bool, ref string, maxlength int) {
 	if maxlength > 0 && len(resp) > maxlength {
 		panic(fmt.Sprintf("返回内容过大（%d字符）", len(resp)))
 	}
-	if strings.HasPrefix(resp, "<!doctype html>") {
+	if strings.HasPrefix(strings.ToLower(
+		strings.ReplaceAll(resp, "\n", "")),
+		"<!doctype html>") {
 		panic("返回 HTML")
 	}
 }
