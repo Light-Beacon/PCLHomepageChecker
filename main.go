@@ -40,11 +40,9 @@ func getrequest(url string, headers map[string]string) string {
 	return string(body)
 }
 
-func unsafe_check(url string, withua bool, withref bool, maxlength int) {
+func unsafe_check(url string, withua bool, ref string, maxlength int) {
 	headers := map[string]string{}
-	if withref {
-		headers["Referer"] = "http://9999.pcl2.server/"
-	}
+	headers["Referer"] = ref
 	if withua {
 		headers["User-Agent"] = "PCL2/9999"
 	}
@@ -57,20 +55,21 @@ func unsafe_check(url string, withua bool, withref bool, maxlength int) {
 	}
 }
 
-func check(url string, withua bool, withref bool,
+func check(url string, withua bool, ref string,
 	successstr string, failedstr string, maxlenght int) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println(failedstr, r)
+			fmt.Println(failedstr, r, "\033[0m")
 			goterror = true
 		}
 	}()
-	unsafe_check(url, withua, withref, maxlenght)
-	fmt.Println(successstr)
+	unsafe_check(url, withua, ref, maxlenght)
+	fmt.Println(successstr, "\033[0m")
 }
 
 func main() {
 	var url string
+	PCL_REF := "http://9999.pcl2.server/"
 	if len(os.Args) <= 1 {
 		fmt.Println("提供主页 URL:")
 		fmt.Scanln(&url)
@@ -78,24 +77,27 @@ func main() {
 		url = os.Args[1]
 	}
 	fmt.Println("检查主页是否可用")
-	check(url, true, true,
-		"[✓] 正常", "[X] 异常：", -1)
+	check(url, true, PCL_REF,
+		"\033[32m[✓] 正常", "\033[31m[X] 异常：", -1)
 	if goterror {
 		return
 	}
+	fmt.Println("检查开源版本 PCL 是否可用")
+	check(url, true, "http://9999.pcl2.open.server/",
+		"\033[32m[✓] 正常", "\033[31m[X] 异常：", -1)
 	if strings.HasSuffix(url, ".xaml") {
 		fmt.Println("检查是否设置版本号(.ini)")
-		check(url+".ini", true, true,
-			"[✓] 正常", "[X] 异常：", 128)
+		check(url+".ini", true, PCL_REF,
+			"\033[32m[✓] 正常", "\033[31m[X] 异常：", 128)
 	} else {
 		fmt.Println("检查是否设置版本号(version)")
-		check(url+"/version", true, true,
-			"[✓] 正常", "[X] 异常：", 128)
+		check(url+"/version", true, PCL_REF,
+			"\033[32m[✓] 正常", "\033[31m[X] 异常：", 128)
 	}
 	fmt.Println("检查是否设置 UA 过滤")
-	check(url, true, false,
-		"[X] 未设置", "[✓] 已设置:", -1)
+	check(url, true, "",
+		"\033[31m[X] 未设置", "\033[32m[✓] 已设置:", -1)
 	fmt.Println("检查是否设置 Referer 过滤")
-	check(url, false, true,
-		"[X] 未设置", "[✓] 已设置:", -1)
+	check(url, false, PCL_REF,
+		"\033[31m[X] 未设置", "\033[32m[✓] 已设置:", -1)
 }
