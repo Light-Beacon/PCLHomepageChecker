@@ -36,7 +36,6 @@ func getrequest(url string, headers map[string]string) string {
 	if err != nil {
 		panic(err)
 	}
-
 	return string(body)
 }
 
@@ -44,7 +43,7 @@ func unsafe_check(url string, withua bool, ref string, maxlength int) {
 	headers := map[string]string{}
 	headers["Referer"] = ref
 	if withua {
-		headers["User-Agent"] = "PCL2/9999"
+		headers["User-Agent"] = "PCL2/2.99.99.99 Mozilla/5.0 AppleWebKit/537.36 Chrome/63.0.3239.132 Safari/537.36"
 	}
 	resp := getrequest(url, headers)
 	if maxlength > 0 && len(resp) > maxlength {
@@ -71,7 +70,7 @@ func check(url string, withua bool, ref string,
 
 func main() {
 	var url string
-	PCL_REF := "http://9999.pcl2.server/"
+	PCL_REF := "http://999.pcl2.server/"
 	if len(os.Args) <= 1 {
 		fmt.Println("提供主页 URL:")
 		fmt.Scanln(&url)
@@ -85,7 +84,7 @@ func main() {
 		return
 	}
 	fmt.Println("检查开源版本 PCL 是否可用")
-	check(url, true, "http://9999.pcl2.open.server/",
+	check(url, true, "http://999.pcl2.open.server/",
 		"\033[32m[✓] 正常", "\033[31m[X] 异常：", -1)
 	if strings.HasSuffix(url, ".xaml") {
 		fmt.Println("检查是否设置版本号(.ini)")
@@ -102,4 +101,6 @@ func main() {
 	fmt.Println("检查是否设置 Referer 过滤")
 	check(url, false, PCL_REF,
 		"\033[31m[X] 未设置", "\033[32m[✓] 已设置:", -1)
+	fmt.Println("\n按回车键退出")
+	fmt.Scanln()
 }
