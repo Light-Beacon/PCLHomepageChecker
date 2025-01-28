@@ -83,8 +83,11 @@ func main() {
 	if goterror {
 		return
 	}
-	fmt.Println("检查开源版本 PCL 是否可用")
+	fmt.Println("检查开源版本 PCL 是否可用 [#5523前]]")
 	check(url, true, "http://999.pcl2.open.server/",
+		"\033[32m[✓] 正常", "\033[31m[X] 异常：", -1)
+	fmt.Println("检查开源版本 PCL 是否可用 [#5523后]")
+	check(url, true, "http://999.open.pcl2.server/",
 		"\033[32m[✓] 正常", "\033[31m[X] 异常：", -1)
 	if strings.HasSuffix(url, ".xaml") {
 		fmt.Println("检查是否设置版本号(.ini)")
