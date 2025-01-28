@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
-var client = &http.Client{}
+var client = &http.Client{
+	Timeout: time.Second * 10}
 var goterror = false
 
 func getrequest(url string, headers map[string]string) string {
@@ -83,7 +85,7 @@ func main() {
 	if goterror {
 		return
 	}
-	fmt.Println("检查开源版本 PCL 是否可用 [#5523前]]")
+	fmt.Println("检查开源版本 PCL 是否可用 [#5523前]")
 	check(url, true, "http://999.pcl2.open.server/",
 		"\033[32m[✓] 正常", "\033[31m[X] 异常：", -1)
 	fmt.Println("检查开源版本 PCL 是否可用 [#5523后]")
