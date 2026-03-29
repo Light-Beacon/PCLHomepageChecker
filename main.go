@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,6 +15,15 @@ var client = &http.Client{
 var goterror = false
 
 func GetRequest(url string, headers map[string]string, fail func(string)) (string, error) {
+	var err error
+	err = nil
+	defer func() {
+		if pan := recover(); pan != nil {
+			errmsg := "在执行请求时出了意外错误: " + fmt.Sprint(pan)
+			fail(errmsg)
+			err = errors.New(errmsg)
+		}
+	}()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fail(err.Error())
@@ -37,7 +47,7 @@ func GetRequest(url string, headers map[string]string, fail func(string)) (strin
 		fail(err.Error())
 		return "", err
 	}
-	return string(body), nil
+	return string(body), err
 }
 
 func Check(url string, withua bool, ref string, maxlength int,
